@@ -1,3 +1,5 @@
-# BoxOffice
-A neat offline webpage to sort all your movies.
+<p align="center">
+<img src="banner.png" width=1700px />
+<p/>
+
 

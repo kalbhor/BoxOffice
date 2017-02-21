@@ -16,10 +16,11 @@ s.close()
 for root, dirs, files in os.walk(".", topdown = True):
 	for file in files:
 		if file.endswith('.mp4'):
-			movies.append(os.path.join(root, file))
+			movies.append(file)
  
 @app.route('/')
 def home():
+    print(IP_ADDR)
     return render_template('index.html', movies = movies)
 
 if __name__ == '__main__':

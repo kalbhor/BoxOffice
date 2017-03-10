@@ -3,4 +3,10 @@
     <a href="static/{{ movie }}">Linkk</a>
     <h1>{{ movie }}</h1>
     {% endfor %}
+    {% for trailer in trailers %}
+    <a href="{{ trailer }}">{{ trailer }}</a>
+    {% endfor %}
+    {% for info in imdb_info %}
+    <h1>{{ info['cast'] }}</h1>
+    {% endfor %}
 </html>

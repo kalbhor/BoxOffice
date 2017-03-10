@@ -3,7 +3,7 @@ import json
 import omdb
 from bs4 import BeautifulSoup
 
-def get_trailer_url(query):
+def get_trailer(query):
     """
     Gather all urls of the trailer for a search query
     from youtube
@@ -20,7 +20,7 @@ def get_trailer_url(query):
     video_urls = ['https://www.youtube.com' + i.get('href')
                  for i in soup_section]
 
-    return video_urls 
+    return video_urls[0]
 
 def get_imdb_info(query):
     """
@@ -51,7 +51,7 @@ def get_imdb_info(query):
 
 if __name__ == '__main__':
     query = input('> ')
-    info = get_imdb_info(query)
+    info = get_trailer(query)
     print(info)
 
 

@@ -22,6 +22,18 @@ def get_trailer(query):
 
     return video_urls[0]
 
+def get_movie_files(loc='.'):
+    """
+    Lists out all movie files in nested directories
+    """
+    movies = []
+    for root, dirs, files in os.walk(loc, topdown = True):
+        for file in files:
+            if file.endswith('.mp4') or file.endswith('.mkv'):
+                movies.append(file[:-4])
+                
+    return movies
+
 def get_imdb_info(query):
     """
     Gathers all imdb info on a movie/tv show

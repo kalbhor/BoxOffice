@@ -12,21 +12,6 @@ s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 s.connect(("google.com",80))
 IP_ADDR = (s.getsockname()[0])
 s.close()
-
-def list_movie_files(loc='.'):
-	"""
-	Lists out all movie files in nested directories
-	"""
-	movies = []
-	for root, dirs, files in os.walk(loc, topdown = True):
-		for file in files:
-			if file.endswith('.mp4') or file.endswith('.mkv'):
-				movies.append(file[:-4])
-
-	trailers = [get_trailer(movie) for movie in movies]
-	imdb_info = [get_imdb_info(movie) for movie in movies]
-
-	return movies, trailers, imdb_info
  
 @app.route('/')
 def home():

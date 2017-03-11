@@ -1,6 +1,8 @@
 import requests
 import json
 import omdb
+import os
+import re
 from bs4 import BeautifulSoup
 
 def get_trailer(query):
@@ -9,7 +11,7 @@ def get_trailer(query):
     from youtube
     """
 
-    YOUTUBECLASS = 'spf-prefetch'
+    YOUTUBECLASS = 'spf-prefetch' # Youtube class containing video
     query = "{} {}".format(query,'trailer')
     html = requests.get('https://www.youtube.com/results',
                         params={'search_query': query})
@@ -20,19 +22,29 @@ def get_trailer(query):
     video_urls = ['https://www.youtube.com' + i.get('href')
                  for i in soup_section]
 
-    return video_urls[0]
+    return video_urls[0] # Return top result
 
 def get_movie_files(loc='.'):
     """
     Lists out all movie files in nested directories
     """
-    movies = []
+    VIDEO_FORMATS = ['avi', 'asf', 'mp4', 'mov', 'flv', 'swf', 'mpg', 'wmv']
+
+    movies = [] # List for storing video files
+    movie_dirs = {} # Dict storing 'folder' : [movies] 
+
     for root, dirs, files in os.walk(loc, topdown = True):
+        folder = os.path.basename(os.path.normpath(root)) # Folder containing videos
         for file in files:
-            if file.endswith('.mp4') or file.endswith('.mkv'):
-                movies.append(file[:-4])
-                
-    return movies
+            if file[-3:] in VIDEO_FORMATS: # Check file format eg : hello.mp4 -> mp4 
+                movies.append(file[:-4]) # Append file name eg : hello.mp4 -> hello
+
+        movie_dirs[folder] = movies
+        movies = []
+
+    del movies
+
+    return movie_dirs
 
 def get_imdb_info(query):
     """
@@ -60,10 +72,37 @@ def get_imdb_info(query):
     return imdb_info
 
 
+def improve_name(query):
+    """
+    Improves file name by removing useless words
+    """
+    try:
+        query = os.path.splitext(query)[0]
+    except IndexError:
+        pass
+
+    # Words to omit from file title for better results
+    chars_filter = "()*[]{}-:_/=+\"\'"
+    words_filter = ('official', 'subtitles', 'dvd', 'remix', 'video',
+                    'full', 'version', 'music', 'mp4', 'hd', 'hq', 
+                    'uploaded', 'torrent', 'movie', 'season')
+
+    # Replace characters to filter with spaces
+    query = ''.join(map(lambda c: " " if c in chars_filter else c, query))
+
+    # Remove crap words
+    query = re.sub('|'.join(re.escape(key) for key in words_filter),
+                       "", query, flags=re.IGNORECASE)
+
+    # Remove duplicate spaces
+    query = re.sub(' +', ' ', query)
+
+    return query.strip()
+
 
 if __name__ == '__main__':
     query = input('> ')
-    info = get_trailer(query)
+    info = get_movie_files(query)
     print(info)
 
 
